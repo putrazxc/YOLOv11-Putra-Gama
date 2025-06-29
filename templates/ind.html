@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rekap Data Kendaraan - Universitas Jember</title>
+</head>
+
+<body>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@300;400;500;600&display=swap');
+
+    :root {
+      /* University Color Palette - matching index.html */
+      --primary-blue: #3e72e3;
+      --secondary-blue: #002293;
+      --light-blue: #dbeafe;
+      --green-primary: #10b981;
+      --green-secondary: #059669;
+      --yellow-primary: #f59e0b;
+      --yellow-secondary: #d97706;
+      --pink-primary: #ec4899;
+      --pink-secondary: #db2777;
+      --gray-bg: #f8fafc;
+      --gray-light: #e2e8f0;
+      --gray-medium: #64748b;
+      --gray-dark: #334155;
+      --white: #dddddd;
+      --sidebar-width: 280px;
+      --header-height: 80px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--gray-bg);
+      color: var(--gray-dark);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar - University Style */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: linear-gradient(180deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+      color: white;
+      position: fixed;
+      height: 100vh;
+      left: 0;
+      top: 0;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 4px 0 20px rgba(37, 99, 235, 0.15);
+    }
+
+    .sidebar-header {
+      padding: 25px 20px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .sidebar-header h3 {
+      font-size: 18px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      margin-bottom: 5px;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar-header p {
+      font-size: 13px;
+      opacity: 0.9;
+      color: var(--light-blue);
+      font-weight: 400;
+    }
+
+    .sidebar-menu {
+      flex: 1;
+      padding: 20px 0;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      padding: 16px 25px;
+      color: white;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative;
+      margin: 2px 15px;
+      border-radius: 12px;
+    }
+
+    .menu-item:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateX(5px);
+    }
+
+    .menu-item.active {
+      background: rgba(255, 255, 255, 0.2);
+      border-left: 4px solid var(--yellow-primary);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .menu-item:before {
+      content: '';
+      width: 10px;
+      height: 10px;
+      background: var(--yellow-primary);
+      border-radius: 50%;
+      margin-right: 15px;
+      box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+    }
+
+    .menu-item span {
+      font-size: 15px;
+      font-weight: 500;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header - University Style */
+    header {
+      background: linear-gradient(135deg, var(--white) 0%, #f1f5f9 100%);
+      border-bottom: 3px solid var(--primary-blue);
+      padding: 20px 35px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.1);
+      height: var(--header-height);
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .header-title img {
+      width: 55px;
+      height: 55px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .header-title-text h1 {
+      font-size: 26px;
+      color: var(--primary-blue);
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .header-title-text p {
+      font-size: 14px;
+      color: var(--gray-medium);
+      font-weight: 500;
+    }
+
+    /* Header Actions */
+    .header-actions {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .refresh-page a, .download-btn, .back-home a {
+      text-decoration: none;
+      padding: 12px 24px;
+      color: white;
+      border-radius: 12px;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .refresh-page a {
+      background: linear-gradient(135deg, var(--green-primary), var(--green-secondary));
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .refresh-page a:hover {
+      background: linear-gradient(135deg, var(--green-secondary), var(--green-primary));
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+
+    .download-btn {
+      background: linear-gradient(135deg, var(--yellow-primary), var(--yellow-secondary));
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+
+    .download-btn:hover {
+      background: linear-gradient(135deg, var(--yellow-secondary), var(--yellow-primary));
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+    }
+
+    .back-home a {
+      background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .back-home a:hover {
+      background: linear-gradient(135deg, var(--secondary-blue), var(--primary-blue));
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+    }
+
+    /* Content Container */
+    .container {
+      padding: 35px;
+      flex: 1;
+      background-color: var(--gray-bg);
+    }
+
+    /* Table Cards */
+    .table-section {
+      background-color: var(--white);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+      border: 1px solid var(--gray-light);
+      transition: all 0.3s ease;
+    }
+
+    .table-section:hover {
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+    }
+
+    .table-section h2 {
+      margin-bottom: 25px;
+      font-size: 24px;
+      color: var(--primary-blue);
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .table-section h2:before {
+      content: '';
+      width: 8px;
+      height: 28px;
+      background: linear-gradient(180deg, var(--primary-blue), var(--secondary-blue));
+      border-radius: 4px;
+    }
+
+    /* Table Styling */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    th {
+      background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+      color: white;
+      padding: 18px 20px;
+      text-align: left;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--gray-light);
+      font-size: 15px;
+      color: var(--gray-dark);
+    }
+
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+
+    tr:hover {
+      background-color: var(--light-blue);
+      transform: scale(1.002);
+      transition: all 0.2s ease;
+    }
+
+    /* Speed styling */
+    .speed-cell {
+      font-weight: 600;
+      color: var(--green-primary);
+    }
+
+    /* Vehicle type styling */
+    .vehicle-motor {
+      color: var(--yellow-primary);
+      font-weight: 600;
+    }
+
+    .vehicle-mobil {
+      color: var(--pink-primary);
+      font-weight: 600;
+    }
+
+    /* Menu Toggle Button */
+    .menu-toggle {
+      display: none;
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .menu-toggle:hover {
+      background: var(--secondary-blue);
+      transform: translateY(-2px);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .menu-toggle {
+        display: block;
+        position: fixed;
+        top: 25px;
+        left: 25px;
+        z-index: 1001;
+      }
+
+      .container {
+        padding: 25px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+        height: auto;
+        padding: 20px;
+      }
+
+      .header-title {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .header-actions {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .container {
+        padding: 20px;
+      }
+
+      .table-section {
+        padding: 20px;
+        overflow-x: auto;
+      }
+
+      table {
+        min-width: 600px;
+      }
+
+      th, td {
+        padding: 12px 16px;
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 15px;
+      }
+
+      .table-section {
+        padding: 15px;
+      }
+
+      th, td {
+        padding: 10px 12px;
+        font-size: 13px;
+      }
+
+      .header-actions {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .refresh-page a, .download-btn, .back-home a {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+
+  <!-- Menu Toggle Button -->
+  <button class="menu-toggle" onclick="toggleSidebar()">☰ Menu</button>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h3>Dashboard Penghitung</h3>
+      <h3>Kecepatan</h3>
+      <p>Speed Detection System</p>
+    </div>
+    
+    <div class="sidebar-menu">
+      <a href="/" class="menu-item">
+        <span>Dashboard</span>
+      </a>
+      <a href="ind.html" class="menu-item active">
+        <span>Rekap Harian</span>
+      </a>
+      <a href="stat.html" class="menu-item">
+        <span>Statistik</span>
+      </a>
+      <a href="info.html" class="menu-item">
+        <span>Informasi</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <header>
+      <div class="header-title">
+        <img src="/static/logo-unej.png" alt="Logo UNEJ" />
+        <div class="header-title-text">
+          <h1>UNIVERSITAS JEMBER</h1>
+          <p><strong>Rekap Data Kendaraan</strong> - Vehicle Speed Detection System</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="refresh-page">
+          <a href="ind.html">🔄 Refresh</a>
+        </div>
+        <button class="download-btn" onclick="downloadData()">📥 Download Data</button>
+        <div class="back-home">
+          <a href="/">🏠 Back to Home</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <!-- Data Kendaraan Section -->
+      <div class="table-section">
+        <h2>Data Kendaraan Terkini</h2>
+        <table id="kendaraanTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Jenis Kendaraan</th>
+              <th>Kecepatan</th>
+              <th>Waktu Deteksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Data will be populated by server -->
+            {% for row in kendaraan %}
+            <tr>
+              <td>{{ row[0] }}</td>
+              <td>
+                <span class="{% if row[1] == 'motor' %}vehicle-motor{% else %}vehicle-mobil{% endif %}">
+                  {{ row[1].title() }}
+                </span>
+              </td>
+              <td class="speed-cell">{{ row[2] }} km/h</td>
+              <td>{{ row[3] }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Rekap Harian Section -->
+      <div class="table-section">
+        <h2>Rekap Harian Kendaraan</h2>
+        <table id="rekapTable">
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th>Total Mobil</th>
+              <th>Total Motor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Sample data for demonstration -->
+            <tr>
+              <td>2025-06-16</td>
+              <td><span class="vehicle-mobil">25</span></td>
+              <td><span class="vehicle-motor">45</span></td>
+            </tr>
+            <tr>
+              <td>2025-06-15</td>
+              <td><span class="vehicle-mobil">30</span></td>
+              <td><span class="vehicle-motor">38</span></td>
+            </tr>
+            <tr>
+              <td>2025-06-14</td>
+              <td><span class="vehicle-mobil">28</span></td>
+              <td><span class="vehicle-motor">42</span></td>
+            </tr>
+            <!-- Data will be populated by server -->
+            {% for row in rekap %}
+            <tr>
+              <td>{{ row[0] }}</td>
+              <td>
+                <span class="vehicle-mobil">{{ row[1] }}</span>
+              </td>
+              <td>
+                <span class="vehicle-motor">{{ row[2] }}</span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('active');
+    }
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', function(event) {
+      const sidebar = document.getElementById('sidebar');
+      const menuToggle = document.querySelector('.menu-toggle');
+      
+      if (window.innerWidth <= 1200 && 
+          !sidebar.contains(event.target) && 
+          !menuToggle.contains(event.target) &&
+          sidebar.classList.contains('active')) {
+        sidebar.classList.remove('active');
+      }
+    });
+
+    // Download Data Function
+    function downloadData() {
+      // Create a dropdown/modal to choose what to download
+      const choice = prompt("Pilih data yang ingin didownload:\n1. Data Kendaraan\n2. Rekap Harian\n3. Semua Data\nMasukkan pilihan (1/2/3):");
+      
+      switch(choice) {
+        case '1':
+          downloadKendaraanData();
+          break;
+        case '2':
+          downloadRekapData();
+          break;
+        case '3':
+          downloadAllData();
+          break;
+        default:
+          alert('Pilihan tidak valid!');
+      }
+    }
+
+    function downloadKendaraanData() {
+      const table = document.getElementById('kendaraanTable');
+      let csv = 'DATA KENDARAAN TERKINI\n';
+      csv += 'ID,Jenis Kendaraan,Kecepatan,Waktu Deteksi\n';
+      
+      const rows = table.querySelectorAll('tbody tr');
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 4) {
+          const id = cells[0].textContent.trim();
+          const jenis = cells[1].textContent.trim();
+          const kecepatan = cells[2].textContent.trim();
+          const waktu = cells[3].textContent.trim();
+          
+          csv += `${id},${jenis},${kecepatan},${waktu}\n`;
+        }
+      });
+      
+      downloadCSV(csv, 'data_kendaraan_' + getCurrentDate() + '.csv');
+    }
+
+    function downloadRekapData() {
+      const table = document.getElementById('rekapTable');
+      let csv = 'REKAP HARIAN KENDARAAN\n';
+      csv += 'Tanggal,Total Mobil,Total Motor\n';
+      
+      const rows = table.querySelectorAll('tbody tr');
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 3) {
+          const tanggal = cells[0].textContent.trim();
+          const totalMobil = cells[1].textContent.trim();
+          const totalMotor = cells[2].textContent.trim();
+          
+          csv += `${tanggal},${totalMobil},${totalMotor}\n`;
+        }
+      });
+      
+      downloadCSV(csv, 'rekap_harian_' + getCurrentDate() + '.csv');
+    }
+
+    function downloadAllData() {
+      // Data Kendaraan
+      const kendaraanTable = document.getElementById('kendaraanTable');
+      let csv = 'DATA KENDARAAN TERKINI\n';
+      csv += 'ID,Jenis Kendaraan,Kecepatan,Waktu Deteksi\n';
+      
+      const kendaraanRows = kendaraanTable.querySelectorAll('tbody tr');
+      kendaraanRows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 4) {
+          const id = cells[0].textContent.trim();
+          const jenis = cells[1].textContent.trim();
+          const kecepatan = cells[2].textContent.trim();
+          const waktu = cells[3].textContent.trim();
+          
+          csv += `${id},${jenis},${kecepatan},${waktu}\n`;
+        }
+      });
+      
+      csv += '\n';
+      
+      // Rekap Harian
+      const rekapTable = document.getElementById('rekapTable');
+      csv += 'REKAP HARIAN KENDARAAN\n';
+      csv += 'Tanggal,Total Mobil,Total Motor\n';
+      
+      const rekapRows = rekapTable.querySelectorAll('tbody tr');
+      rekapRows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 3) {
+          const tanggal = cells[0].textContent.trim();
+          const totalMobil = cells[1].textContent.trim();
+          const totalMotor = cells[2].textContent.trim();
+          
+          csv += `${tanggal},${totalMobil},${totalMotor}\n`;
+        }
+      });
+      
+      downloadCSV(csv, 'semua_data_kendaraan_' + getCurrentDate() + '.csv');
+    }
+
+    function tableToCSV(table) {
+      let csv = '';
+      const rows = table.querySelectorAll('tr');
+      
+      rows.forEach((row, index) => {
+        const cells = row.querySelectorAll('th, td');
+        const rowData = [];
+        
+        cells.forEach(cell => {
+          // Get clean text content
+          let cellText = cell.textContent.trim();
+          
+          // Remove extra whitespace and newlines
+          cellText = cellText.replace(/\s+/g, ' ');
+          
+          // For speed cells, clean up the format
+          if (cell.classList.contains('speed-cell')) {
+            cellText = cellText.replace(' km/h', ' km/h');
+          }
+          
+          // Remove HTML entity characters and clean up
+          cellText = cellText.replace(/[^\w\s\-\.\/\:]/g, '');
+          
+          rowData.push(cellText);
+        });
+        
+        csv += rowData.join(',') + '\n';
+      });
+      
+      return csv;
+    }
+
+    function downloadCSV(csv, filename) {
+      // Add BOM for proper Excel UTF-8 support
+      const BOM = '\uFEFF';
+      const csvContent = BOM + csv;
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      
+      if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Show success message
+        alert('Data berhasil didownload: ' + filename);
+      } else {
+        alert('Browser Anda tidak mendukung download otomatis.');
+      }
+    }
+
+    function getCurrentDate() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+  </script>
+
+</body>
+</html>
