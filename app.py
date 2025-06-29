@@ -19,7 +19,7 @@ cursor = db.cursor()
 
 # Initialize components
 model = YOLO("best.pt")
-cap = cv2.VideoCapture("Kalibrasi Benar.mp4")
+cap = cv2.VideoCapture("Video.mp4")
 REAL_DISTANCE = 2 
 ESP8266_IP = "http://172.20.10.3/" 
 
