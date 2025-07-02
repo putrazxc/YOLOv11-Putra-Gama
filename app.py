@@ -24,7 +24,7 @@ db = mysql.connector.connect(
 cursor = db.cursor()
 
 model = YOLO("11best.pt")
-cap = cv2.VideoCapture("rtsp://admin:Uptti212!@10.155.155.162:554/Streaming/Channels/102")
+cap = cv2.VideoCapture("Video.mp4")
 
 REAL_DISTANCE = 2 
 ESP8266_IP = "http://172.20.10.3/" 
