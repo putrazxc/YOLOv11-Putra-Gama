@@ -23,7 +23,7 @@ db = mysql.connector.connect(
 )
 cursor = db.cursor()
 
-model = YOLO("11best.pt")
+model = YOLO("best.pt")
 cap = cv2.VideoCapture("Video.mp4")
 
 REAL_DISTANCE = 2 
